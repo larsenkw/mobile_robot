@@ -27,7 +27,7 @@ void loop() {
   // Motor A forward at full speed
   digitalWrite(DIRECTION_A, HIGH);
   digitalWrite(BRAKE_A, LOW);
-  digitalWrite(PWM_A, 255);
+  analogWrite(PWM_A, 255);
   delay(2000);
 
   // Engage brake A and wait
@@ -37,7 +37,7 @@ void loop() {
   // Motor B forward at full speed
   digitalWrite(DIRECTION_B, HIGH);
   digitalWrite(BRAKE_B, LOW);
-  digitalWrite(PWM_B, 255);
+  analogWrite(PWM_B, 255);
   delay(2000);
 
   // Engage brake B and wait
@@ -53,8 +53,8 @@ void loop() {
   digitalWrite(DIRECTION_B, LOW);
   digitalWrite(BRAKE_A, LOW);
   digitalWrite(BRAKE_B, LOW);
-  digitalWrite(PWM_A, 123);
-  digitalWrite(PWM_B, 123);
+  analogWrite(PWM_A, 123);
+  analogWrite(PWM_B, 123);
   delay(2000);
 
   // Stop both and wait
