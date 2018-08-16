@@ -11,8 +11,9 @@
  */
 
 #include <ros.h>
+#include <rc_car/MotorPercent.h>
 
-// Define pins
+// Define pins (currently motor A is left, motor B is right)
 const int DIRECTION_A = 12;
 const int DIRECTION_B = 13;
 const int PWM_A = 3;
@@ -24,8 +25,47 @@ const int CURRENT_B = A1;
 
 double speed = 0;
 
+// Create ROS Objects
+ros::NodeHandle nh;
+
+void motorCallback(const rc_car::MotorPercent& motor_msg)
+{
+  float left_motor = motor_msg.data[0];
+  float right_motor = motor_msg.data[1];
+
+  bool left_direction;
+  bool right_direction;
+  float left_speed;
+  float right_speed;
+
+  if (left_motor >= 0) {
+    left_direction = 1;
+  }
+  else {
+    left_direction = 0;
+  }
+
+  if (right_motor >= 0) {
+    right_direction = 1;
+  }
+  else {
+    right_direction = 0;
+  }
+
+  left_speed = fabs(left_motor);
+  right_speed = fabs(right_motor);
+
+  setMotorA(left_direction, left_speed, 0);
+  setMotorB(right_direction, right_speed, 0);
+}
+
+ros::Subscriber<rc_car::MotorPercent> motor_sub("motor_percent", &motorCallback);
+
 void setup() {
-  Serial.begin(9600);
+  nh.initNode();
+  nh.subscribe(motor_sub);
+  
+  Serial.begin(57600);
 
   // Setup channel A (left motor)
   pinMode(DIRECTION_A, OUTPUT);
@@ -38,20 +78,22 @@ void setup() {
 }
 
 void loop() {
-  while (Serial.available()) {
-    speed = Serial.parseFloat();
-  }
+//  while (Serial.available()) {
+//    speed = Serial.parseFloat();
+//  }
+//
+//  setMotorA(true, false, speed);
+//  setMotorB(true, false, speed);
+//
+//  delay(500);
 
-  setMotorA(true, false, speed);
-  setMotorB(true, false, speed);
-
-  delay(500);
-
+  nh.spinOnce();
+  delay(1);
 }
 
 // Motor Control Functions
-void setMotorA(bool direction, bool brake, double speed) { 
-  // Set direction
+void setMotorA(bool direction, double speed, bool brake) { 
+  // Set direction, true/1 is forward, false/0 is backward
   if (direction == true) {
     digitalWrite(DIRECTION_A, HIGH);
   }
@@ -79,8 +121,8 @@ void setMotorA(bool direction, bool brake, double speed) {
   Serial.println("Dir: " + String(direction));
 }
 
-void setMotorB(bool direction, bool brake, double speed) {
-  // Set direction
+void setMotorB(bool direction, double speed,  bool brake) {
+  // Set direction, true/1 is forward, false/0 is backward
   if (direction == true) {
     digitalWrite(DIRECTION_B, HIGH);
   }
