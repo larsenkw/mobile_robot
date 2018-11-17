@@ -1,7 +1,7 @@
-# RC Car Package
+# Mobile Robot Package
 
-This package contains code for developing an remote controlled car from a 
-differential drive robot base.
+This package contains code for developing an remote controlled robot with a 
+differential drive base.
 
 Helpful Info
 Joystick Differential Control:
